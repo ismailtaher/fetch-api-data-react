@@ -6,7 +6,7 @@ import Footer from "./Footer";
 import { useState, useEffect } from "react";
 
 function App() {
-  const API_URL = "http://localhost:3500/itemss";
+  const API_URL = "http://localhost:3500/items";
 
   const [items, setItems] = useState([]);
 
@@ -16,21 +16,26 @@ function App() {
 
   const [fetchError, setFetchError] = useState(null);
 
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     const fetchItems = async () => {
       try {
         const response = await fetch(API_URL);
         if (!response.ok) throw Error("Did not receive expected data");
         const listItems = await response.json();
-        console.log(listItems);
         setItems(listItems);
         setFetchError(null);
       } catch (err) {
         setFetchError(err.message);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchItems();
+    setTimeout(() => {
+      fetchItems();
+    }, 2000);
   }, []);
 
   const addItem = (item) => {
@@ -68,8 +73,9 @@ function App() {
         handleSubmit={handleSubmit}></AddItem>
       <SearchItem search={search} setSearch={setSearch}></SearchItem>
       <main>
+        {isLoading && <p>Loading Items...</p>}
         {fetchError && <p style={{ color: "red" }}>{`Error: ${fetchError}`}</p>}
-        {!fetchError && (
+        {!fetchError && !isLoading && (
           <Content
             items={items.filter((item) =>
               item.item.toLowerCase().includes(search.toLowerCase())
