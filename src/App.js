@@ -33,6 +33,7 @@ function App() {
       }
     };
 
+    // The code below for the setTimeout() is just to simulate the waiting of an actual API and shouldn't be used for the actual production code
     setTimeout(() => {
       fetchItems();
     }, 2000);
